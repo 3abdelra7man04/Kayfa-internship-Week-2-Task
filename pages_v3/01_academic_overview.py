@@ -57,7 +57,6 @@ with c1:
 
         # Build the Bar Chart with text properties enabled
         fig_q1 = px.bar(att_rate, x="group_id", y="attendance_rate",
-                        title="Attendance Rate vs Avg",
                         text="text_label",
                         color_discrete_sequence=[colors[0] if colors else "blue"])
 
@@ -92,7 +91,6 @@ with c2:
     st.markdown("**Score Distribution & Volatility**")
     if not grades.empty and "type" in grades.columns and "score" in grades.columns:
         fig_q2 = px.box(grades, x="type", y="score", color="type",
-                        title="Scores by Assessment Type",
                         color_discrete_sequence=colors)
         fig_q2.update_layout(margin=dict(t=30, b=20, l=10, r=10), xaxis_title="Assessment Type", yaxis_title="Score", showlegend=False)
         st.plotly_chart(fig_q2, use_container_width=True)
@@ -126,7 +124,6 @@ with c3:
             lowest_course = avg_grades_df.iloc[0][x_col]
 
             fig_q3 = px.box(df_q3, x=x_col, y="score", color=x_col,
-                            title="Grade Spread by Course",
                             category_orders={x_col: avg_grades_df[x_col].tolist()},
                             color_discrete_sequence=colors)
             fig_q3.update_traces(boxmean=True)
@@ -137,7 +134,6 @@ with c3:
         else:
             # Fallback: render without ordering if snapshot data is missing
             fig_q3 = px.box(df_q3, x=x_col, y="score", color=x_col,
-                            title="Grade Spread by Course",
                             color_discrete_sequence=colors)
             fig_q3.update_traces(boxmean=True)
             fig_q3.update_layout(margin=dict(t=30, b=20, l=10, r=10), xaxis_title="Course", yaxis_title="Score", showlegend=False)

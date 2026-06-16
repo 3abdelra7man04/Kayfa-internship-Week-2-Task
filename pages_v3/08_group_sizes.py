@@ -49,38 +49,14 @@ else:
         barmode="group",
         title="Group Capacities: Stated vs Actual",
         labels={"group_id": "Group ID"},
-        color_discrete_sequence=["#95a5a6", "#3498db"]
+        color_discrete_sequence=["#95a5a6", "#3498db"],
+        text="Count",
     )
-    fig.update_layout(legend_title_text="")
+    fig.update_traces(texttemplate="%{text}", textposition="outside")
+    fig.update_layout(legend_title_text="", uniformtext_minsize=8, uniformtext_mode="hide")
     st.plotly_chart(fig, use_container_width=True)
 
-    # Discrepancy Table
-    st.markdown("### ⚠️ Discrepancy Investigation List")
-    st.write("Groups flagged below have a noticeable discrepancy between their reported size and actual active students (negative means fewer actual students than reported).")
     
-    # Sort by Group ID
-    df_discrepancy_sorted = df_discrepancy.sort_values(by="group_id")
-    
-    # Highlight large discrepancies with pandas styling
-    def highlight_discrepancy(val):
-        if val < -10:
-            return 'color: #e74c3c; font-weight: bold'
-        elif val > 10:
-            return 'color: #f39c12; font-weight: bold'
-        return ''
-
-    st.dataframe(
-        df_discrepancy_sorted.style.map(highlight_discrepancy, subset=['discrepancy']),
-        column_config={
-            "group_id": "Group ID",
-            "group_name": "Group Name",
-            "stated_num_students": "Stated Count",
-            "student_count": "Actual Count",
-            "discrepancy": "Discrepancy (Actual - Stated)"
-        },
-        use_container_width=True,
-        hide_index=True
-    )
 
 st.markdown('<div class="section-title" style="font-size: 1.5rem; margin-top: 2rem;">💡 Strategic Insights</div>', unsafe_allow_html=True)
 st.markdown("""

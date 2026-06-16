@@ -34,68 +34,86 @@ else:
         "Disengaged At-Risk": "#e74c3c"    # Red
     }
     
-    # 1. Plotly Scatter Plot
-    fig = px.scatter(
-        segmentation, 
-        x="attendance_rate", 
-        y="avg_grade", 
-        color="segment",
-        color_discrete_map=segment_colors,
-        size="engagement_count",
-        hover_data=["failed_concepts"],
-        labels={
-            "attendance_rate": "Attendance Rate %",
-            "avg_grade": "Average Score",
-            "segment": "Student Segment",
-            "engagement_count": "Engagement Events",
-            "failed_concepts": "Failed Concepts"
-        },
-        title="Student Distribution by Segment (Bubble size = Engagement)"
-    )
-    
-    fig.update_layout(
-        xaxis_range=[0, 105],
-        yaxis_range=[0, 105],
-        legend_title_text="Segments"
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
 
-    # 2. Segment Summary Table
-    st.markdown("### 📊 Segment Overview")
-    
-    # Calculate summary metrics per segment
-    summary = segmentation.groupby("segment").agg(
-        Students=("student_id", "count"),
-        Avg_Score=("avg_grade", "mean"),
-        Avg_Attendance=("attendance_rate", "mean"),
-        Avg_Engagement=("engagement_count", "mean"),
-        Avg_Failed_Concepts=("failed_concepts", "mean")
+    # Compute per-segment average for all 4 features
+    radar_summary = segmentation.groupby("segment").agg(
+        avg_grade=("avg_grade", "mean"),
+        attendance_rate=("attendance_rate", "mean"),
+        engagement_count=("engagement_count", "mean"),
+        failed_concepts=("failed_concepts", "mean"),
     ).reset_index()
-    
-    # Round metrics for display
-    summary["Avg_Score"] = summary["Avg_Score"].round(1)
-    summary["Avg_Attendance"] = summary["Avg_Attendance"].round(1)
-    summary["Avg_Engagement"] = summary["Avg_Engagement"].round(1)
-    summary["Avg_Failed_Concepts"] = summary["Avg_Failed_Concepts"].round(1)
-    
-    # Define an explicit sort order based on performance
-    sort_order = {"High Achievers": 1, "Steady Performers": 2, "Struggling Attenders": 3, "Disengaged At-Risk": 4}
-    summary["sort"] = summary["segment"].map(sort_order)
-    summary = summary.sort_values("sort").drop("sort", axis=1)
-    
-    st.dataframe(
-        summary,
-        column_config={
-            "segment": "Segment",
-            "Students": "Headcount",
-            "Avg_Score": "Avg Score",
-            "Avg_Attendance": "Avg Attendance %",
-            "Avg_Engagement": "Avg Engagement",
-            "Avg_Failed_Concepts": "Avg Failed Concepts"
-        },
-        use_container_width=True,
-        hide_index=True
+
+    # Normalize engagement and failed_concepts to 0-100 scale for comparability
+    max_eng  = radar_summary["engagement_count"].max() or 1
+    max_fail = radar_summary["failed_concepts"].max() or 1
+    radar_summary["engagement_norm"] = (radar_summary["engagement_count"] / max_eng)  * 100
+    radar_summary["failed_norm"]     = (radar_summary["failed_concepts"]  / max_fail) * 100
+
+    categories = ["Avg Score", "Attendance %", "Engagement", "Failed Concepts"]
+
+    st.markdown("**Individual Segment Radar Charts — All 4 Features**")
+    st.write("Each radar shows a single segment's profile across score, attendance, engagement, and concept failure rate (normalized 0–100).")
+
+    # Fixed order so grid is always consistent
+    seg_order = ["High Achievers", "Steady Performers", "Struggling Attenders", "Disengaged At-Risk"]
+
+    fig_radar = make_subplots(
+        rows=2, cols=2,
+        specs=[[{"type": "polar"}, {"type": "polar"}],
+               [{"type": "polar"}, {"type": "polar"}]],
+        subplot_titles=seg_order,
+        vertical_spacing=0.15,
+        horizontal_spacing=0.08,
     )
+
+    positions = [(1, 1), (1, 2), (2, 1), (2, 2)]
+    polar_refs = ["polar", "polar2", "polar3", "polar4"]
+
+    for idx, seg in enumerate(seg_order):
+        row_data = radar_summary[radar_summary["segment"] == seg]
+        if row_data.empty:
+            continue
+        row = row_data.iloc[0]
+        values = [
+            row["avg_grade"],
+            row["attendance_rate"],
+            row["engagement_norm"],
+            row["failed_norm"],
+        ]
+        values_closed    = values + [values[0]]
+        categories_closed = categories + [categories[0]]
+        r, c = positions[idx]
+        fig_radar.add_trace(
+            go.Scatterpolar(
+                r=values_closed,
+                theta=categories_closed,
+                fill="toself",
+                name=seg,
+                line_color=segment_colors.get(seg, "#999"),
+                fillcolor=segment_colors.get(seg, "#999"),
+                opacity=0.55,
+                showlegend=False,
+            ),
+            row=r, col=c,
+        )
+
+    # Apply radialaxis settings to all 4 polar subplots
+    # rotation=45 shifts the first axis label away from the 12-o'clock
+    # position where subplot_titles sit, preventing overlap
+    radar_axis = dict(visible=True, range=[0, 100], dtick=20, tickfont=dict(size=9))
+    angular_axis = dict(rotation=45)
+    fig_radar.update_layout(
+        polar=dict(radialaxis=radar_axis,  angularaxis=angular_axis),
+        polar2=dict(radialaxis=radar_axis, angularaxis=angular_axis),
+        polar3=dict(radialaxis=radar_axis, angularaxis=angular_axis),
+        polar4=dict(radialaxis=radar_axis, angularaxis=angular_axis),
+        height=750,
+        margin=dict(t=80, b=40, l=40, r=40),
+    )
+    st.plotly_chart(fig_radar, use_container_width=True)
+
 
 
 st.markdown('<div class="section-title" style="font-size: 1.5rem; margin-top: 2rem;">💡 Strategic Insights</div>', unsafe_allow_html=True)

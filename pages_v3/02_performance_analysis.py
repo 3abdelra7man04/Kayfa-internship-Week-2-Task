@@ -29,27 +29,29 @@ else:
     avg_grades_att_by_student = pd.DataFrame(agg_snap.get("avg_grades_att_by_student", []))
     
     with c1:
-        st.subheader("Grades vs Attendance Rate")
+        st.markdown("**Grades vs Attendance Rate**")
+        st.write("Displays the correlation between a student's physical attendance and their overall academic performance.")
         fig_scatter = px.scatter(avg_grades_att_by_student, x="attendance_rate", y="score", color="student_id",color_discrete_sequence=["#3498db"],trendline="ols")
         fig_scatter.update_layout(xaxis_title="Attendance Rate %", yaxis_title="Score", showlegend=False)
         st.plotly_chart(fig_scatter, use_container_width=True)
     
     c2, c3 = st.columns(2)
     with c2:
-        st.subheader("Scores vs Login Counts")
+        st.markdown("**Scores vs Login Counts**")
+        st.write("Highlights how frequently logging into the platform correlates with higher scores.")
         avg_grades_login_by_student = pd.DataFrame(agg_snap.get("avg_grades_login_by_student", []))
         if not avg_grades_login_by_student.empty:
-            fig_scatter = px.scatter(avg_grades_login_by_student, x="login_count", y="score", color="student_id",color_discrete_sequence=["#3498db"])
+            fig_scatter = px.scatter(avg_grades_login_by_student, x="login_count", y="score", color_discrete_sequence=["#3498db"], trendline="ols", trendline_color_override="red")
             fig_scatter.update_layout(xaxis_title="Login Count", yaxis_title="Score", showlegend=False)
             st.plotly_chart(fig_scatter, use_container_width=True)
         else:
             st.info("Assessment type data not available.")
-    
     with c3:
-        st.subheader("Scores vs Video Watch Time")
+        st.markdown("**Scores vs Video Watch Time**")
+        st.write("Examines the relationship between asynchronous video engagement and final grades.")
         avg_grades_video_watch_by_student = pd.DataFrame(agg_snap.get("avg_grades_video_watch_by_student", []))
         if not avg_grades_video_watch_by_student.empty:
-            fig_scatter = px.scatter(avg_grades_video_watch_by_student, x="total_video_watch_seconds", y="score", color="student_id",color_discrete_sequence=["#3498db"])
+            fig_scatter = px.scatter(avg_grades_video_watch_by_student, x="total_video_watch_seconds", y="score", color_discrete_sequence=["#3498db"], trendline="ols", trendline_color_override="red")
             fig_scatter.update_layout(xaxis_title="Video Watch Time", yaxis_title="Score", showlegend=False)
             st.plotly_chart(fig_scatter, use_container_width=True)
         else:

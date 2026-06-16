@@ -47,7 +47,7 @@ def page_footer(logo_b64):
     st.markdown(f"""
     <div style="text-align:center;padding:25px 0 12px;color:var(--tagline-color);font-size:0.75rem; display:flex; align-items:center; justify-content:center; gap:10px;">
         <img src="{logo_b64}" style="height: 24px; width: auto; object-fit: contain;" alt="Kayfa Logo">
-        <span>· E-Learning Ed-Tech Platform · Academic Exploratory Analysis · © 2026 Kayfa Inc.</span>
+        <span>· Week #2 Task · © 2026 Kayfa Inc.</span>
     </div>
     """, unsafe_allow_html=True)
 
