@@ -1,0 +1,10 @@
+group_id,group_name,course_id,stated_num_students,session_day,session_time,instructor,student_count
+G01,Group 01 — C001,C001,52,Thursday,16:00:00,Eng. Khaled Adel,50.0
+G02,Group 02 — C001,C001,56,Thursday,18:00:00,Dr. Mona Saad,56.0
+G03,Group 03 — C002,C002,67,Sunday,18:00:00,Dr. Laila ElBaz,53.0
+G04,Group 04 — C002,C002,65,Saturday,16:00:00,Eng. Hossam Refaat,65.0
+G05,Group 05 — C003,C003,76,Tuesday,18:00:00,Eng. Khaled Adel,46.0
+G06,Group 06 — C004,C004,56,Saturday,17:00:00,Dr. Mona Saad,56.0
+G07,Group 07 — C005,C005,70,Wednesday,21:00:00,Eng. Hossam Refaat,57.0
+G08,Group 08 — C006,C006,60,Saturday,17:00:00,Dr. Laila ElBaz,59.0
+G09,Group 09 — C006,C006,51,Thursday,19:00:00,Dr. Mona Saad,50.0
