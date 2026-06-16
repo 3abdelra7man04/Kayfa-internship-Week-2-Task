@@ -18,6 +18,27 @@ apply_styles()
 logo_base64 = get_base64_image("kayfa logo.svg")
 
 # ══════════════════════════════════════════════════════════════════════════════
+# NAVIGATION ROUTING (Must be initialized before st.page_link is called)
+# ══════════════════════════════════════════════════════════════════════════════
+
+pages = {
+    "Dashboard": [
+        st.Page("pages_v3/01_academic_overview.py", title="📊 Academic Overview"),
+        st.Page("pages_v3/02_performance_analysis.py", title="📈 Performance Analysis"),
+        st.Page("pages_v3/03_concept_mastery.py", title="🧠 Concept Mastery"),
+        st.Page("pages_v3/04_submission_analysis.py", title="⏳ Submission Analysis"),
+        st.Page("pages_v3/05_term_trends.py", title="📅 Term Trends"),
+        st.Page("pages_v3/06_age_analysis.py", title="👥 Age Demographics"),
+        st.Page("pages_v3/07_student_segmentation.py", title="🎯 Student Segmentation"),
+        st.Page("pages_v3/08_group_sizes.py", title="🔎 Group Sizes"),
+        st.Page("pages_v3/09_at_risk_ranking.py", title="🚨 At-Risk Ranking"),
+        st.Page("pages_v3/10_group_trends.py", title="📈 Group Grade Trends"),
+    ]
+}
+
+pg = st.navigation(pages, position="hidden")
+
+# ══════════════════════════════════════════════════════════════════════════════
 # SIDEBAR – Global Filters Shared Across st.navigation
 # ══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
@@ -95,26 +116,7 @@ with st.sidebar:
     st.page_link("pages_v3/09_at_risk_ranking.py", label="At-Risk Ranking", icon="🚨")
     st.page_link("pages_v3/10_group_trends.py", label="Group Grade Trends", icon="📈")
 
-# ══════════════════════════════════════════════════════════════════════════════
-# NAVIGATION ROUTING
-# ══════════════════════════════════════════════════════════════════════════════
 
-pages = {
-    "Dashboard": [
-        st.Page("pages_v3/01_academic_overview.py", title="📊 Academic Overview"),
-        st.Page("pages_v3/02_performance_analysis.py", title="📈 Performance Analysis"),
-        st.Page("pages_v3/03_concept_mastery.py", title="🧠 Concept Mastery"),
-        st.Page("pages_v3/04_submission_analysis.py", title="⏳ Submission Analysis"),
-        st.Page("pages_v3/05_term_trends.py", title="📅 Term Trends"),
-        st.Page("pages_v3/06_age_analysis.py", title="👥 Age Demographics"),
-        st.Page("pages_v3/07_student_segmentation.py", title="🎯 Student Segmentation"),
-        st.Page("pages_v3/08_group_sizes.py", title="🔎 Group Sizes"),
-        st.Page("pages_v3/09_at_risk_ranking.py", title="🚨 At-Risk Ranking"),
-        st.Page("pages_v3/10_group_trends.py", title="📈 Group Grade Trends"),
-    ]
-}
-
-pg = st.navigation(pages, position="hidden")
 
 # Render the selected page
 pg.run()
